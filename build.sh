@@ -84,6 +84,8 @@ cat <<'TWK'
 .theme-dark { --blockquote-border: #61ffca; }
 .markdown-preview-view blockquote,
 .markdown-source-view.mod-cm6 .HyperMD-quote {
+  text-indent: -15px !important;
+  padding-inline-start: 25px !important;;
   border-left-color: #61ffca !important;
   /* slight turquoise fade over the original diagonal bg */
   background: linear-gradient(90deg, rgba(97, 255, 202, 0.05), transparent 55%),
