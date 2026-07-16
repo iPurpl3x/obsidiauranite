@@ -75,3 +75,6 @@ s/#bb9af7/#a277ff/gI
 s/#a897ff/#af8aff/gI
 s/#6272a4/#4a4658/gI
 s/#2e3236/#2d2b3a/gI
+
+# blockquote accent bars (only used there) -> turquoise
+s/13, ?185, ?215/97, 255, 202/g

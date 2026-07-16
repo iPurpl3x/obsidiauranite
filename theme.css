@@ -1034,7 +1034,7 @@ blockquote {
   left: 0px;
   height: 2px;
   width: 60%;
-  background: linear-gradient(90deg, rgba(13, 185, 215, 0.5), #110f18);
+  background: linear-gradient(90deg, rgba(97, 255, 202, 0.5), #110f18);
 }
 
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-quote + .HyperMD-quote::before {
@@ -1049,7 +1049,7 @@ blockquote {
   left: 0px;
   height: 2px;
   width: 25%;
-  background: linear-gradient(90deg, rgba(13, 185, 215, 0.5), #15141b);
+  background: linear-gradient(90deg, rgba(97, 255, 202, 0.5), #15141b);
 }
 
 .HyperMD-quote.HyperMD-quote-2::before,
@@ -1825,3 +1825,129 @@ body:not(.tasks) li[data-task='D'].task-list-item.is-checked {
   color: var(--text-normal);
 }
 
+
+/** ===============================================================
+**  OBSIDIAURANITE TWEAKS
+** =============================================================== */
+
+/* --- Tabs: drop Obsidianite's stale/broken tab customization, use defaults --- */
+.workspace-tab-header { opacity: 1 !important; }
+.is-focused .mod-active .workspace-tab-header.is-active .workspace-tab-header-inner-icon,
+.is-focused .mod-active .workspace-tab-header.is-active .workspace-tab-header-inner-title {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* --- Blockquote: keep Obsidianite's ORIGINAL design (left border + top/bottom
+       accent bars + diagonal bg); only recolor to turquoise. The bars are
+       recolored via palette.sed (13,185,215 -> 97,255,202); here we retint the
+       left border (its literal is the shared purple accent). --- */
+.theme-dark { --blockquote-border: #61ffca; }
+.markdown-preview-view blockquote,
+.markdown-source-view.mod-cm6 .HyperMD-quote {
+  border-left-color: #61ffca !important;
+  /* slight turquoise fade over the original diagonal bg */
+  background: linear-gradient(90deg, rgba(97, 255, 202, 0.05), transparent 55%),
+              linear-gradient(135deg, rgba(32, 28, 41, 0.45), #15141b) !important;
+}
+/* Accent bars: start at FULL opacity (match the solid vertical line, no opacity
+   gap) and shift left 3px so they sit flush against the vertical line's edge */
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-quote::before,
+.markdown-preview-view blockquote::before,
+.markdown-preview-view blockquote::after {
+  background: linear-gradient(90deg, #61ffca, transparent 66%) !important;
+  border-inline-start: none;
+  left: -3px !important;      /* flush with vertical line's inner edge, no corner nub */
+  width: 100% !important;     /* smooth full-width fade, no abrupt mid gap */
+  height: 3px !important;     /* match the 3px vertical line -> uniform thickness */
+}
+.HyperMD-quote::after {
+  background: linear-gradient(90deg, rgb(97, 255, 202), transparent 33%);
+  width: 100%;
+}
+.markdown-preview-view blockquote::before { top: 0 !important; }
+.markdown-preview-view blockquote::after { bottom: 0 !important; }
+.markdown-preview-view blockquote p:first-of-type::before { color: #61ffca; }
+
+/* --- Titles: keep original text color; ONLY the underline turns turquoise,
+       for both reading view (h*) and live preview (.HyperMD-header) --- */
+.markdown-preview-view h2, .markdown-preview-view h3, .markdown-preview-view h4,
+.markdown-preview-view h5, .markdown-preview-view h6,
+.HyperMD-header.HyperMD-header-2, .HyperMD-header.HyperMD-header-3,
+.HyperMD-header.HyperMD-header-4, .HyperMD-header.HyperMD-header-5,
+.HyperMD-header.HyperMD-header-6 {
+  border-image-source: linear-gradient(to right, #61ffca, transparent 66%) !important;
+}
+
+/* --- Bold: purple + turquoise gradient --- */
+.cm-strong, strong {
+  background-image: linear-gradient(62deg, #61ffca 0%, #a277ff 100%) !important;
+}
+
+/* --- Completed AND cancelled tasks: strike + faded PINK, matching the
+       external-link underline color (--bg-sub-accent-55) --- */
+.markdown-preview-view ul > li.task-list-item.is-checked,
+.markdown-source-view.mod-cm6 .HyperMD-task-line[data-task='x'],
+.markdown-source-view.mod-cm6 .HyperMD-task-line[data-task='X'],
+.markdown-source-view.mod-cm6 .HyperMD-task-line[data-task='M'],
+.markdown-preview-view ul li[data-task='-'].task-list-item.is-checked,
+body:not(.tasks) li[data-task='-'].task-list-item.is-checked,
+.markdown-source-view.mod-cm6 .HyperMD-task-line[data-task]:is([data-task='-']) {
+  color: var(--bg-sub-accent-55) !important;
+  text-decoration: line-through solid var(--bg-sub-accent-55) 1px !important;
+}
+
+/* --- Checkbox boxes: unchecked turquoise, completed [x] pink (= its text) --- */
+.theme-dark {
+  --checkbox-border-color: #61ffca;
+  --checkbox-color: var(--bg-sub-accent-55);
+  --checkbox-color-hover: var(--bg-sub-accent-55);
+  --checkbox-marker-color: #15141b;
+  --text-faint: #f694ff; /* pink; also fixes the cancelled [-] dash (uses --text-faint) */
+}
+.contains-task-list .task-list-item::before { border-color: #61ffca !important; }
+
+/* Cancelled [-] dash checkbox: match its TEXT's faded pink (--text-faint is
+   solid pink -> wrong alpha), so dash and text are identical */
+input[data-task='-']:checked,
+li[data-task='-'] > input:checked,
+li[data-task='-'] > p > input:checked {
+  color: var(--bg-sub-accent-55) !important;
+}
+
+/* In-progress [/] checkbox: turquoise outline, keep the rest */
+input[data-task='/'],
+li[data-task='/'] > input,
+li[data-task='/'] > p > input {
+  border-color: #61ffca !important;
+}
+
+/* --- Links: small underline at rest (original) with a 2px gap; on hover the
+       fill grows TALLER than the text (rises). !important on hover size so the
+       resting gap rule can't freeze the animation. --- */
+.internal-link, .external-link,
+.cm-s-obsidian span.cm-link:not(.cm-formatting-link) .cm-underline,
+.cm-s-obsidian span.cm-hmd-internal-link .cm-underline {
+  background-position: 0 calc(100% + 2px) !important;
+}
+.internal-link:hover, .external-link:hover,
+.cm-s-obsidian span.cm-link:not(.cm-formatting-link) .cm-underline:hover,
+.cm-s-obsidian span.cm-hmd-internal-link .cm-underline:hover {
+  background-position: 0 100% !important;
+  background-size: 4px 50px !important;
+  /* vertical padding on an inline el paints the fill taller (like the
+     highlight) without reflowing the line */
+  padding: 2px 0 !important;
+}
+
+/* --- Highlight ==text==: flashy turquoise bg, dark text (needs
+       -webkit-text-fill-color to beat the theme's fill), taller top+bottom --- */
+mark, .markdown-rendered mark, .cm-s-obsidian .cm-highlight {
+  background-color: #61ffca !important;
+  color: #15141b !important;
+  -webkit-text-fill-color: #15141b !important;
+  padding: 0.15em 0.2em !important;
+  border-radius: 0px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
