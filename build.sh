@@ -86,10 +86,21 @@ cat <<'TWK'
 .markdown-source-view.mod-cm6 .HyperMD-quote {
   text-indent: -15px !important;
   padding-inline-start: 25px !important;;
+  margin-block: 0 !important;
+  padding-block: 1rem !important;
   border-left-color: #61ffca !important;
   /* slight turquoise fade over the original diagonal bg */
   background: linear-gradient(90deg, rgba(97, 255, 202, 0.05), transparent 55%),
               linear-gradient(135deg, rgba(32, 28, 41, 0.45), #15141b) !important;
+}
+/* Live-preview: every quote source-line is its own element. Only the first
+   line of a run needs top padding, only the last needs bottom padding —
+   interior lines (incl. a blank ">" spacer) get none, flush together. */
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-quote + .HyperMD-quote {
+  padding-top: 0 !important;
+}
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-quote:has(+ .HyperMD-quote) {
+  padding-bottom: 0 !important;
 }
 /* Accent bars: start at FULL opacity (match the solid vertical line, no opacity
    gap) and shift left 3px so they sit flush against the vertical line's edge */
@@ -118,6 +129,17 @@ cat <<'TWK'
 .HyperMD-header.HyperMD-header-4, .HyperMD-header.HyperMD-header-5,
 .HyperMD-header.HyperMD-header-6 {
   border-image-source: linear-gradient(to right, #61ffca, transparent 66%) !important;
+}
+
+/* --- Header underline: sit close to the text, breathing room after it before
+       the next block (not the reverse, which is what uniform padding gave) --- */
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-2,
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-3,
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-4,
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-5,
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-6 {
+  padding-bottom: 6px !important;
+  margin-bottom: 14px !important;
 }
 
 /* --- Bold: purple + turquoise gradient --- */
