@@ -85,7 +85,7 @@ cat <<'TWK'
 .markdown-preview-view blockquote,
 .markdown-source-view.mod-cm6 .HyperMD-quote {
   text-indent: -15px !important;
-  padding-inline-start: 25px !important;;
+  padding-inline-start: 25px !important;
   margin-block: 0 !important;
   padding-block: 1rem !important;
   border-left-color: #61ffca !important;
@@ -132,14 +132,35 @@ cat <<'TWK'
 }
 
 /* --- Header underline: sit close to the text, breathing room after it before
-       the next block (not the reverse, which is what uniform padding gave) --- */
+       the next block (not the reverse, which is what uniform padding gave).
+       NEVER use vertical margin on a .cm-line: CodeMirror 6's height map is
+       built from line bounding rects, which exclude margin, so any margin
+       desyncs it and the cursor/selection overlays land on the wrong line
+       (drift accumulates down the document). The 14px gap therefore lives as
+       padding-top on the FOLLOWING line instead. --- */
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-2,
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-3,
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-4,
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-5,
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-6 {
   padding-bottom: 6px !important;
-  margin-bottom: 14px !important;
+}
+.markdown-source-view.mod-cm6.is-live-preview
+  .HyperMD-header:not(.HyperMD-header-1)
+  + .cm-line:not(.HyperMD-header):not(.HyperMD-quote) {
+  padding-top: 14px;
+}
+
+/* --- <hr>: Obsidianite gives the <hr> inside a .cm-line 4em block margins.
+       Those collapse out through the line (no vertical padding/border to stop
+       them), so CodeMirror's height map is short by 8em at every rule and the
+       cursor drifts below it. Same rule as headers: padding on the line, not
+       margin on its child. Reading view keeps the margins. --- */
+.markdown-source-view.mod-cm6 .cm-line:has(> hr) {
+  padding-block: 4em !important;
+}
+.markdown-source-view.mod-cm6 .cm-line > hr {
+  margin-block: 0 !important;
 }
 
 /* --- Bold: purple + turquoise gradient --- */
