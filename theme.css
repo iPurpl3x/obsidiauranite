@@ -2048,8 +2048,8 @@ mark a:hover, mark .internal-link:hover, mark .external-link:hover,
 /* --- Bare URLs: .cm-url is both the bare URL and the (target) half of a
        [text](target) link, and Obsidianite renders it at --text-faint / 0.4
        opacity. --text-faint is pink here (it drives the cancelled-task dash),
-       so a bare URL came out as barely-legible faded pink. Muted, readable. --- */
+       so a bare URL came out as barely-legible faded pink. No fade at all. --- */
 .cm-url {
   color: var(--text-muted) !important;
-  opacity: 0.75;
+  opacity: 1;
 }
