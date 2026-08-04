@@ -131,33 +131,49 @@ cat <<'TWK'
   border-image-source: linear-gradient(to right, #61ffca, transparent 66%) !important;
 }
 
-/* --- Header underline: sit close to the text, breathing room after it before
-       the next block (not the reverse, which is what uniform padding gave).
+/* --- Header underline (live preview): sit close to the text, breathing room
+       after it before the next block.
        NEVER use vertical margin on a .cm-line: CodeMirror 6's height map is
        built from line bounding rects, which exclude margin, so any margin
        desyncs it and the cursor/selection overlays land on the wrong line
-       (drift accumulates down the document). The 14px gap therefore lives as
-       padding-top on the FOLLOWING line instead. --- */
+       (drift accumulates down the document).
+       So the line keeps its full 20px padding-bottom and the underline is
+       drawn as a pseudo-element 14px above the padding edge — 6px under the
+       text, 14px after the line. The gap is inside the header, which means it
+       is there no matter what block follows (paragraph, quote, list, fence).
+       Reading view keeps the real border-bottom. --- */
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-2,
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-3,
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-4,
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-5,
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-6 {
-  padding-bottom: 6px !important;
+  position: relative;
+  border-bottom: none !important;
 }
-.markdown-source-view.mod-cm6.is-live-preview
-  .HyperMD-header:not(.HyperMD-header-1)
-  + .cm-line:not(.HyperMD-header):not(.HyperMD-quote) {
-  padding-top: 14px;
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-2::after,
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-3::after,
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-4::after,
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-5::after,
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-header.HyperMD-header-6::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  height: 1px;
+  background: linear-gradient(to right, #61ffca, transparent 66%);
+  pointer-events: none;   /* clicks in the gap still reach the line */
 }
 
 /* --- <hr>: Obsidianite gives the <hr> inside a .cm-line 4em block margins.
        Those collapse out through the line (no vertical padding/border to stop
        them), so CodeMirror's height map is short by 8em at every rule and the
        cursor drifts below it. Same rule as headers: padding on the line, not
-       margin on its child. Reading view keeps the margins. --- */
+       margin on its child. Reading view keeps the margins.
+       2em not 4em: as margins these collapsed into one gap, as padding they
+       stack, so half each side reproduces the original spacing. --- */
 .markdown-source-view.mod-cm6 .cm-line:has(> hr) {
-  padding-block: 4em !important;
+  padding-block: 2em !important;
 }
 .markdown-source-view.mod-cm6 .cm-line > hr {
   margin-block: 0 !important;
@@ -166,6 +182,16 @@ cat <<'TWK'
 /* --- Bold: purple + turquoise gradient --- */
 .cm-strong, strong {
   background-image: linear-gradient(62deg, #61ffca 0%, #a277ff 100%) !important;
+}
+
+/* --- Italic: keep the purple, drop Obsidianite's font-family override.
+       It asked for OperatorMonoSSmLig-Book, then Rubik, then --default-font,
+       which itself starts with Rubik and falls through to -apple-system. With
+       none of those installed every italic run silently rendered in the system
+       font instead of the vault's text font, so bold italic came out visibly
+       lighter than bold. Inheriting gives real Italic / Bold Italic faces. --- */
+.cm-em, em {
+  font-family: inherit !important;
 }
 
 /* --- Completed AND cancelled tasks: strike + faded PINK, matching the
@@ -234,6 +260,30 @@ mark, .markdown-rendered mark, .cm-s-obsidian .cm-highlight {
   border-radius: 0px;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
+}
+
+/* A link inside a highlight keeps the link's own white text, which is
+   unreadable on turquoise. Force the highlight's dark text instead — in both
+   nesting orders, and on hover, where the link rule pushes #fff. */
+mark a, mark .internal-link, mark .external-link,
+.cm-s-obsidian .cm-highlight .cm-underline,
+.cm-s-obsidian .cm-underline .cm-highlight,
+.cm-s-obsidian .cm-underline.cm-highlight,
+mark a:hover, mark .internal-link:hover, mark .external-link:hover,
+.cm-s-obsidian .cm-highlight .cm-underline:hover,
+.cm-s-obsidian .cm-underline:hover .cm-highlight,
+.cm-s-obsidian .cm-underline.cm-highlight:hover {
+  color: #15141b !important;
+  -webkit-text-fill-color: #15141b !important;
+}
+
+/* --- Bare URLs: .cm-url is both the bare URL and the (target) half of a
+       [text](target) link, and Obsidianite renders it at --text-faint / 0.4
+       opacity. --text-faint is pink here (it drives the cancelled-task dash),
+       so a bare URL came out as barely-legible faded pink. Muted, readable. --- */
+.cm-url {
+  color: var(--text-muted) !important;
+  opacity: 0.75;
 }
 TWK
 } > "$OUT"
