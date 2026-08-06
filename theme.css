@@ -2053,3 +2053,28 @@ mark a:hover, mark .internal-link:hover, mark .external-link:hover,
   color: var(--text-muted) !important;
   opacity: 1;
 }
+
+/* --- Print: bold/italic are gradients / colored via text-fill, which drop
+       out or clash on paper. Force them to plain black when printing. --- */
+@media print {
+  span.cm-strong,
+  strong {
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #000 !important;
+    color: #000;
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+  .cm-strong .cm-selection,
+  strong::selection {
+    -webkit-text-fill-color: none;
+  }
+  .cm-strong,
+  strong {
+    background-image: none !important;
+  }
+  em {
+    color: #000 !important;
+  }
+}
