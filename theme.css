@@ -1078,7 +1078,7 @@ blockquote {
   color: var(--text-accent);
   position: absolute;
   top: 0.1rem;
-  left: -1.8rem;
+  left: -2.4rem;
 }
 
 /**-------------------**
@@ -1852,14 +1852,30 @@ body:not(.tasks) li[data-task='D'].task-list-item.is-checked {
 .theme-dark { --blockquote-border: #61ffca; }
 .markdown-preview-view blockquote,
 .markdown-source-view.mod-cm6 .HyperMD-quote {
-  text-indent: -15px !important;
+  /* No text-indent here: in reading mode it is inherited by each child <p>
+     and outdents only the first line of every paragraph (misalignment).
+     25px padding alone aligns reading view. */
   padding-inline-start: 25px !important;
+  /* Obsidian sets inline text-indent:-<marker-width> / padding-inline-start:
+     <marker-width> on quote lines (a matched pair that pulls the hidden ">"
+     into the padding). Overriding only the padding breaks the pair and
+     outdents the first line; zero the indent too — see hide-rule below. */
+  text-indent: 0 !important;
   margin-block: 0 !important;
   padding-block: 1rem !important;
   border-left-color: #61ffca !important;
   /* slight turquoise fade over the original diagonal bg */
   background: linear-gradient(90deg, rgba(97, 255, 202, 0.05), transparent 55%),
               linear-gradient(135deg, rgba(32, 28, 41, 0.45), #15141b) !important;
+}
+/* Live preview: hide the ">" formatting marker span. It is fully transparent
+   anyway; hiding it frees its width so the first text line lands on the same
+   25px as every wrapped continuation line and as reading view. Scoped to live
+   preview — raw source mode must keep its literal ">" characters visible.
+   (This Obsidian version has no .cm-blockquote-border span; the vertical
+   border is the theme's own border-left.) */
+.markdown-source-view.mod-cm6.is-live-preview .HyperMD-quote .cm-formatting-quote {
+  display: none !important;
 }
 /* Live-preview: every quote source-line is its own element. Only the first
    line of a run needs top padding, only the last needs bottom padding —
@@ -1869,6 +1885,16 @@ body:not(.tasks) li[data-task='D'].task-list-item.is-checked {
 }
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-quote:has(+ .HyperMD-quote) {
   padding-bottom: 0 !important;
+}
+/* Top gap: reading mode separates a quote from the paragraph above via the
+   paragraph's 1rem margin; editor lines have no margins, so the top accent
+   bar sat flush against the preceding text. The gap lives as padding-bottom
+   on the PRECEDING line (padding, never margin: vertical margin on a .cm-line
+   desyncs CM6's height map -> cursor drift, v1.2.3). The quote box itself
+   stays untouched — bar flush at its top edge, no background lip above it. */
+.markdown-source-view.mod-cm6.is-live-preview
+  .cm-line:not(.HyperMD-quote):has(+ .HyperMD-quote) {
+  padding-bottom: 1rem;
 }
 /* Accent bars: start at FULL opacity (match the solid vertical line, no opacity
    gap) and shift left 3px so they sit flush against the vertical line's edge */
